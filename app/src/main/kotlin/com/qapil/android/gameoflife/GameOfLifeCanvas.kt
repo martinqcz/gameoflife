@@ -1,9 +1,12 @@
 package com.qapil.android.gameoflife
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -24,10 +27,14 @@ fun GameOfLifeCanvas(
 
     val gridLineWidth = with(LocalDensity.current) { 1.dp.toPx() }
 
+    // Track cells affected during the current drag session
+    val affectedCells = remember { mutableStateOf<MutableSet<Pair<Int, Int>>>(mutableSetOf()) }
+    val drawingMode = remember { mutableStateOf<Boolean?>(null) } // true = drawing alive, false = drawing dead, null = not drawing
+
     Canvas(
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(grid) {
+            .pointerInput(Unit) {
                 detectTapGestures { offset ->
                     val cellWidth = size.width / grid.cols
                     val cellHeight = size.height / grid.rows
@@ -38,6 +45,56 @@ fun GameOfLifeCanvas(
                         onCellTap(row, col)
                     }
                 }
+            }
+            .pointerInput(grid.rows, grid.cols) {
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        // Clear affected cells for new drag session
+                        affectedCells.value.clear()
+
+                        val cellWidth = size.width / grid.cols
+                        val cellHeight = size.height / grid.rows
+                        val col = (offset.x / cellWidth).toInt()
+                        val row = (offset.y / cellHeight).toInt()
+
+                        if (row in 0 until grid.rows && col in 0 until grid.cols) {
+                            // Determine drawing mode based on first cell's current state
+                            drawingMode.value = !grid[row, col]
+                            affectedCells.value.add(Pair(row, col))
+                            onCellTap(row, col)
+                        }
+                    },
+                    onDrag = { change, _ ->
+                        val cellWidth = size.width / grid.cols
+                        val cellHeight = size.height / grid.rows
+                        val col = (change.position.x / cellWidth).toInt()
+                        val row = (change.position.y / cellHeight).toInt()
+
+                        if (row in 0 until grid.rows && col in 0 until grid.cols) {
+                            val cellKey = Pair(row, col)
+                            // Only affect each cell once per drag session
+                            if (!affectedCells.value.contains(cellKey)) {
+                                affectedCells.value.add(cellKey)
+                                // Set cell to the drawing mode state (alive or dead)
+                                val currentState = grid[row, col]
+                                if (currentState != drawingMode.value) {
+                                    onCellTap(row, col)
+                                }
+                            }
+                        }
+                        change.consume()
+                    },
+                    onDragEnd = {
+                        // Reset drawing mode after drag ends
+                        drawingMode.value = null
+                        affectedCells.value.clear()
+                    },
+                    onDragCancel = {
+                        // Reset drawing mode if drag is cancelled
+                        drawingMode.value = null
+                        affectedCells.value.clear()
+                    }
+                )
             }
     ) {
         val cellWidth = size.width / grid.cols
