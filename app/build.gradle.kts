@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -33,6 +35,13 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+}
+
+android.applicationVariants.configureEach {
+    outputs.configureEach {
+        val outputImpl = this as BaseVariantOutputImpl
+        outputImpl.outputFileName = "GameOfLife-app-${name}-${versionName}.apk"
     }
 }
 
