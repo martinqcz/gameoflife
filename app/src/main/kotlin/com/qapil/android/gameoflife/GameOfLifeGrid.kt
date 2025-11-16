@@ -1,5 +1,9 @@
 package com.qapil.android.gameoflife
 
+import android.util.Log
+
+private const val TAG = "GameOfLifeGrid"
+
 /**
  * Represents the grid state for Conway's Game of Life
  */
@@ -18,7 +22,12 @@ data class GameOfLifeGrid(
      */
     operator fun get(row: Int, col: Int): Boolean {
         if (row !in 0 until rows || col !in 0 until cols) return false
-        return cells[row * cols + col]
+
+        Log.i(TAG,"get row: $row; col: $col")
+
+        // TODO 1
+
+        return false
     }
 
     /**
@@ -26,30 +35,23 @@ data class GameOfLifeGrid(
      */
     fun set(row: Int, col: Int, alive: Boolean): GameOfLifeGrid {
         if (row !in 0 until rows || col !in 0 until cols) return this
-        val newCells = cells.copyOf()
-        newCells[row * cols + col] = alive
-        return copy(cells = newCells)
+
+        Log.i(TAG,"set row: $row; col: $col; alive: $alive")
+
+        // TODO 2
+
+        return copy(cells = cells)
     }
 
     /**
      * Toggle the state of a cell at (row, col)
      */
     fun toggle(row: Int, col: Int): GameOfLifeGrid {
-        return set(row, col, !get(row, col))
-    }
+        Log.i(TAG,"toggle row: $row; col: $col")
 
-    /**
-     * Count the number of alive neighbors for a cell at (row, col)
-     */
-    private fun countNeighbors(row: Int, col: Int): Int {
-        var count = 0
-        for (dr in -1..1) {
-            for (dc in -1..1) {
-                if (dr == 0 && dc == 0) continue
-                if (get(row + dr, col + dc)) count++
-            }
-        }
-        return count
+        // TODO 3
+
+        return set(row, col, false)
     }
 
     /**
@@ -60,18 +62,21 @@ data class GameOfLifeGrid(
      */
     fun nextGeneration(): GameOfLifeGrid {
         val newCells = BooleanArray(rows * cols)
-        for (row in 0 until rows) {
-            for (col in 0 until cols) {
-                val neighbors = countNeighbors(row, col)
-                val alive = get(row, col)
-                newCells[row * cols + col] = when {
-                    alive && neighbors in 2..3 -> true
-                    !alive && neighbors == 3 -> true
-                    else -> false
-                }
-            }
-        }
+
+        // TODO 4
+
         return copy(cells = newCells)
+    }
+
+    /**
+     * Count the number of alive neighbors for a cell at (row, col)
+     */
+    private fun countNeighbors(row: Int, col: Int): Int {
+        var count = 0
+
+        // TODO 5
+
+        return count
     }
 
     /**
