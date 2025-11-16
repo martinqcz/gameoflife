@@ -116,12 +116,5 @@ data class GameOfLifeGrid(
         fun empty(rows: Int, cols: Int): GameOfLifeGrid {
             return GameOfLifeGrid(rows, cols, BooleanArray(rows * cols))
         }
-
-        /**
-         * Create a random grid
-         */
-        fun random(rows: Int, cols: Int, density: Float = 0.3f): GameOfLifeGrid {
-            return empty(rows, cols).randomize(density)
-        }
     }
 }
