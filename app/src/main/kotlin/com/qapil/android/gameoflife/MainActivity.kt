@@ -37,8 +37,8 @@ fun GameOfLifeScreen(viewModel: GameViewModel = viewModel()) {
 
     // Initialize grid based on screen size
     LaunchedEffect(Unit) {
-        val cols = (screenWidth / 15).coerceIn(20, 60)
-        val rows = ((screenHeight - 200) / 15).coerceIn(20, 60)
+        val cols = (screenWidth / 20).coerceIn(20, 60)
+        val rows = ((screenHeight - 200) / 20).coerceIn(20, 60)
         viewModel.initGrid(rows, cols)
     }
 
