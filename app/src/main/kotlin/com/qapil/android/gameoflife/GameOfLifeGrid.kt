@@ -6,11 +6,10 @@ package com.qapil.android.gameoflife
 data class GameOfLifeGrid(
     val rows: Int,
     val cols: Int,
-    private val cells: BooleanArray
+    private val cells: Array<BooleanArray>
 ) {
     init {
         require(rows > 0 && cols > 0) { "Grid dimensions must be positive" }
-        require(cells.size == rows * cols) { "Cell array size must match grid dimensions" }
     }
 
     /**
@@ -18,7 +17,7 @@ data class GameOfLifeGrid(
      */
     operator fun get(row: Int, col: Int): Boolean {
         if (row !in 0 until rows || col !in 0 until cols) return false
-        return cells[row * cols + col]
+        return cells[row][col]
     }
 
     /**
@@ -26,8 +25,8 @@ data class GameOfLifeGrid(
      */
     fun set(row: Int, col: Int, alive: Boolean): GameOfLifeGrid {
         if (row !in 0 until rows || col !in 0 until cols) return this
-        val newCells = cells.copyOf()
-        newCells[row * cols + col] = alive
+        val newCells = Array(rows) { r -> cells[r].copyOf() }
+        newCells[row][col] = alive
         return copy(cells = newCells)
     }
 
@@ -59,12 +58,12 @@ data class GameOfLifeGrid(
      * 3. All other cells die or stay dead
      */
     fun nextGeneration(): GameOfLifeGrid {
-        val newCells = BooleanArray(rows * cols)
+        val newCells = Array(rows) { BooleanArray(cols) }
         for (row in 0 until rows) {
             for (col in 0 until cols) {
                 val neighbors = countNeighbors(row, col)
                 val alive = get(row, col)
-                newCells[row * cols + col] = when {
+                newCells[row][col] = when {
                     alive && neighbors in 2..3 -> true
                     !alive && neighbors == 3 -> true
                     else -> false
@@ -78,14 +77,14 @@ data class GameOfLifeGrid(
      * Clear all cells
      */
     fun clear(): GameOfLifeGrid {
-        return copy(cells = BooleanArray(rows * cols))
+        return copy(cells = Array(rows) { BooleanArray(cols) })
     }
 
     /**
      * Randomize the grid
      */
     fun randomize(density: Float = 0.3f): GameOfLifeGrid {
-        val newCells = BooleanArray(rows * cols) { Math.random() < density }
+        val newCells = Array(rows) { BooleanArray(cols) { Math.random() < density } }
         return copy(cells = newCells)
     }
 
@@ -114,7 +113,7 @@ data class GameOfLifeGrid(
          * Create an empty grid
          */
         fun empty(rows: Int, cols: Int): GameOfLifeGrid {
-            return GameOfLifeGrid(rows, cols, BooleanArray(rows * cols))
+            return GameOfLifeGrid(rows, cols, Array(rows) { BooleanArray(cols) })
         }
     }
 }
