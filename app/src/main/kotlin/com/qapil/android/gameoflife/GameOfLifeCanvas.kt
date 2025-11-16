@@ -36,8 +36,8 @@ fun GameOfLifeCanvas(
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
-                    val cellWidth = size.width / grid.cols
-                    val cellHeight = size.height / grid.rows
+                    val cellWidth = size.width / grid.cols.toFloat()
+                    val cellHeight = size.height / grid.rows.toFloat()
                     val col = (offset.x / cellWidth).toInt()
                     val row = (offset.y / cellHeight).toInt()
 
@@ -52,8 +52,8 @@ fun GameOfLifeCanvas(
                         // Clear affected cells for new drag session
                         affectedCells.value.clear()
 
-                        val cellWidth = size.width / grid.cols
-                        val cellHeight = size.height / grid.rows
+                        val cellWidth = size.width / grid.cols.toFloat()
+                        val cellHeight = size.height / grid.rows.toFloat()
                         val col = (offset.x / cellWidth).toInt()
                         val row = (offset.y / cellHeight).toInt()
 
@@ -65,8 +65,8 @@ fun GameOfLifeCanvas(
                         }
                     },
                     onDrag = { change, _ ->
-                        val cellWidth = size.width / grid.cols
-                        val cellHeight = size.height / grid.rows
+                        val cellWidth = size.width / grid.cols.toFloat()
+                        val cellHeight = size.height / grid.rows.toFloat()
                         val col = (change.position.x / cellWidth).toInt()
                         val row = (change.position.y / cellHeight).toInt()
 
