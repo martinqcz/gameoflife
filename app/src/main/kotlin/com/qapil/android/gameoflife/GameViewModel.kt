@@ -20,7 +20,7 @@ class GameViewModel : ViewModel() {
     var generationCount by mutableStateOf(0)
         private set
 
-    var speed by mutableStateOf(5) // Speed from 1 (slowest) to 10 (fastest)
+    var speed by mutableStateOf(8) // Speed from 1 (slowest) to 10 (fastest)
 
     private var gameJob: Job? = null
 
