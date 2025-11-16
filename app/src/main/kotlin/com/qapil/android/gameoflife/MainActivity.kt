@@ -32,6 +32,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+private const val CELL_SIZE = 25
+
 @Composable
 fun GameOfLifeScreen(viewModel: GameViewModel = viewModel()) {
     val configuration = LocalConfiguration.current
@@ -40,8 +42,8 @@ fun GameOfLifeScreen(viewModel: GameViewModel = viewModel()) {
 
     // Initialize grid based on screen size
     LaunchedEffect(Unit) {
-        val cols = (screenWidth / 20).coerceIn(20, 60)
-        val rows = ((screenHeight - 200) / 20).coerceIn(20, 60)
+        val cols = (screenWidth / CELL_SIZE).coerceIn(20, 60)
+        val rows = ((screenHeight - 200) / CELL_SIZE).coerceIn(20, 60)
         viewModel.initGrid(rows, cols)
     }
 
